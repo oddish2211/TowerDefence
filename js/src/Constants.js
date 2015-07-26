@@ -2,7 +2,10 @@
  * Created by pverbrugge on 24/07/15.
  */
 
-var URL_ROOT = "/TowerDefence";
+var root = window.location.pathname.split('/');
+root.pop();
+
+var URL_ROOT = root.join('/');
 var URL_RESOURCES = URL_ROOT + "/resources";
 var URL_SPRITES = URL_RESOURCES + "/sprites";
 var URL_TEXTURES = URL_RESOURCES + "/textures";
