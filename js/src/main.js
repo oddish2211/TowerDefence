@@ -100,6 +100,8 @@ document.addEventListener("mousedown", mouseDownHandler, false);
 document.addEventListener("mouseup", mouseUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
+var entityManager = new EntityManager(scene);
+
 /* Create camera */
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.x = 0;
@@ -162,20 +164,19 @@ registerOnMouseDown(function(position, buttonCode) {
 });
 
 /* Create entities list */
-var entities = [];
 for(var y = -8; y < 9; y++) {
     for(var x = -8; x < 9; x++) {
         var tile = new Tile(x, y);
         tileMeshes.push(tile.mesh);
         tileHoverCallbacks.push(tile.onHover);
         tileDownCallbacks.push(tile.onSelect);
-        entities.push(tile);
+        entityManager.addEntity(tile);
 
         //if(x == -2 && y == -2) {
         if(Math.random() * 32 > 30) {
             var tower = new Tower();
             tile.place(tower);
-            entities.push(tower);
+            entityManager.addEntity(tower);
         }
     }
 }
@@ -184,7 +185,7 @@ var enemies = []
 var enemy0 = new Enemy();
 
 enemies.push(enemy0);
-entities.push(enemy0);
+entityManager.addEntity(enemy0);
 
 getNearestEnemy = function(position) {
     var target;
@@ -195,20 +196,6 @@ getNearestEnemy = function(position) {
     });
     return target;
 };
-
-addEntity = function(entity) {
-    entity.load(scene);
-    entities.push(entity);
-}
-
-removeEntity = function(entity) {
-    entity.unload(scene);
-
-    var index = entities.indexOf(entity);
-    if(index > -1) {
-        entities.splice(index, 1);
-    }
-}
 
 var render = function () {
 	requestAnimationFrame(render);
@@ -253,14 +240,14 @@ var render = function () {
         enemy0.mesh.position.x += 1 * delta;
     }
 
-	entities.forEach(function(entity) {
+	entityManager.entities.forEach(function(entity) {
 		entity.update(delta);
 	});
 
 	renderer.render(scene, camera);
 };
 
-entities.forEach(function(entity) {
+entityManager.entities.forEach(function(entity) {
 	entity.load(scene);
 });
 

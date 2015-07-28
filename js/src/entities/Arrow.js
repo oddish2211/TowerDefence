@@ -22,7 +22,7 @@ Arrow = function(origin, direction, velocity) {
         self.mesh.position.add(stepVector);
 
         if(self.mesh.position.z < 0) {
-            removeEntity(self);
+            entityManager.removeEntity(self);
         }
     };
 

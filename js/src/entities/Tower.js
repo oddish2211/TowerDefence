@@ -26,7 +26,7 @@ Tower = function() {
             direction.sub(self.mesh.position);
             direction.normalize();
             var arrow = new Arrow(self.mesh.position, direction, 40);
-            addEntity(arrow);
+            entityManager.addEntity(arrow);
         }
     };
 
