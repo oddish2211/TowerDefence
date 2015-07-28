@@ -105,6 +105,8 @@ var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeigh
 camera.position.x = 0;
 camera.position.y = 0;
 camera.position.z = 10;
+
+/* Camera velocity */
 var velocity = new THREE.Vector3();
 
 /* Create time basis */
@@ -246,9 +248,9 @@ var render = function () {
     }
 
     if(keyStates[KEY.LEFT].state) {
-        enemy0.mesh.position.x += 1 * delta;
-    } else if(keyStates[KEY.RIGHT].state) {
         enemy0.mesh.position.x -= 1 * delta;
+    } else if(keyStates[KEY.RIGHT].state) {
+        enemy0.mesh.position.x += 1 * delta;
     }
 
 	entities.forEach(function(entity) {
