@@ -18,13 +18,14 @@ function Map(width, length) {
             tileHoverCallbacks.push(tile.onHover);
             tileDownCallbacks.push(tile.onSelect);
 
+            /*
             //if(x == -2 && y == -2) {
             if(Math.random() * 32 > 30) {
                 var tower = new Tower();
                 tile.place(tower);
                 game.entityManager.addEntity(tower);
             }
-
+            */
             this.tiles.push(tile);
         }
     }

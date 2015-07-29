@@ -13,16 +13,12 @@ function Tile(x, y) {
     var defaultTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/dirt.png');
     defaultTexture.magFilter = THREE.NearestFilter;
     defaultTexture.minFilter = THREE.NearestFilter;
-    var highlightTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/dirt.png');
+    var highlightTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/stone.png');
     highlightTexture.magFilter = THREE.NearestFilter;
     highlightTexture.minFilter = THREE.NearestFilter;
-    var selectTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/stonebrick.png');
-    selectTexture.magFilter = THREE.NearestFilter;
-    selectTexture.minFilter = THREE.NearestFilter;
     this.material = [
         new THREE.MeshBasicMaterial({map: defaultTexture}),
-        new THREE.MeshBasicMaterial({map: highlightTexture}),
-        new THREE.MeshBasicMaterial({map: selectTexture})
+        new THREE.MeshBasicMaterial({map: highlightTexture})
     ];
     this.mesh = new THREE.Mesh(this.geometry, this.material[0]);
 
@@ -42,16 +38,12 @@ function Tile(x, y) {
     this.onSelect = function() {
         if (self.isSelected) {
             self.isSelected = false;
-            self.mesh.material = self.material[0];
+            game.entityManager.removeEntity(self.entity);
+            self.entity = undefined;
         } else {
             self.isSelected = true;
-            self.mesh.material = self.material[2];
-
-            if(self.entity == undefined) {
-                console.log("Selected tile " + self.mesh.position.x + "," + self.mesh.position.y + " contains nothing");
-            } else {
-                console.log("Selected tile " + self.mesh.position.x + "," + self.mesh.position.y + " contains entity");
-            }
+            self.place(new Tower());
+            game.entityManager.addEntity(self.entity);
         }
     };
 }
