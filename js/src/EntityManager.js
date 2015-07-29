@@ -29,18 +29,32 @@ EntityManager.prototype.removeEntity = function(entity) {
     }
 };
 
-EntityManager.prototype.getNearestEntity = function(position, className, range) {
+EntityManager.prototype.getNearestEntity = function(position, className, maxRange) {
     var className = className || Entity;
-    var range = range || Number.POSITIVE_INFINITY;
+    var maxRange = maxRange || Number.POSITIVE_INFINITY;
 
     var nearestEntity;
     var nearestEntityDistance;
     this.entities.forEach(function(entity) {
         var distance = position.distanceTo(entity.position);
-        if(entity instanceof className && distance < range && (!nearestEntity || distance < nearestEntityDistance)) {
+        if(entity instanceof className && distance < maxRange && (!nearestEntity || distance < nearestEntityDistance)) {
             nearestEntity = entity;
             nearestEntityDistance = distance;
         }
     });
     return nearestEntity;
+};
+
+EntityManager.prototype.getNearestEntities = function(position, className, maxRange) {
+    var className = className || Entity;
+    var maxRange = maxRange || Number.POSITIVE_INFINITY;
+
+    var nearestEntities = []
+    this.entities.forEach(function(entity) {
+        var distance = position.distanceTo(entity.position);
+        if(entity instanceof className && distance < maxRange) {
+            nearestEntities.push(entity);
+        }
+    });
+    return nearestEntities;
 };

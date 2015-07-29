@@ -26,6 +26,8 @@ Entity.prototype.deInit = function() {};
 function DrawableEntity() {
     Entity.call(this);
 
+    this.position.setZ(0.5);
+
     this.geometry = new THREE.BoxGeometry(1, 1, 1);
     this.material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
     this.mesh = new THREE.Mesh(this.geometry, this.material);
