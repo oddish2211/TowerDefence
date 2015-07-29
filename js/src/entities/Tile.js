@@ -1,13 +1,15 @@
 /**
  * Created by pverbrugge on 25/07/15.
  */
+"use strict";
 
-Tile = function(x, y) {
-    Entity.call(this);
+function Tile(x, y) {
+    DrawableEntity.call(this);
     var self = this;
 
-    this.geometry = new THREE.BoxGeometry(1, 1, 0);
+    this.position.set(x, y, 0);
 
+    this.geometry = new THREE.BoxGeometry(1, 1, 0);
     var defaultTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/dirt.png');
     defaultTexture.magFilter = THREE.NearestFilter;
     defaultTexture.minFilter = THREE.NearestFilter;
@@ -23,7 +25,6 @@ Tile = function(x, y) {
         new THREE.MeshBasicMaterial({map: selectTexture})
     ];
     this.mesh = new THREE.Mesh(this.geometry, this.material[0]);
-    this.mesh.position.set(x, y, 0);
 
     this.isSelected = false;
 
@@ -52,25 +53,19 @@ Tile = function(x, y) {
                 console.log("Selected tile " + self.mesh.position.x + "," + self.mesh.position.y + " contains entity");
             }
         }
-    }
-
-    this.place = function(entity) {
-        self.entity = entity;
-        self.entity.mesh.position.x = self.mesh.position.x;
-        self.entity.mesh.position.y = self.mesh.position.y;
-    }
-
-    this.update = function(delta) {
-
-    };
-
-    this.load = function(scene) {
-        scene.add(self.mesh);
-    };
-
-    this.unload = function(scene) {
-        scene.remove(self.mesh);
     };
 }
 
-Tile.prototype = Object.create(Entity.prototype);
+Tile.prototype = Object.create(DrawableEntity.prototype);
+Tile.constructor = Tile;
+
+Tile.prototype.place = function(entity) {
+    this.entity = entity;
+    this.entity.position.x = this.position.x;
+    this.entity.position.y = this.position.y;
+};
+
+Tile.prototype.update = function(delta) {
+    /* Update position using parent function */
+    DrawableEntity.prototype.update.call(this, delta);
+}

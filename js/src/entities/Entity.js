@@ -3,45 +3,48 @@
  */
 "use strict";
 
-function EntityManager(scene) {
-    this.scene = scene;
-    this.entities = [];
+function Entity() {
+    this.position = new THREE.Vector3();
+    this.velocity = new THREE.Vector3();
+}
 
-    this.addEntity = function(entity, performLoad) {
-        performLoad = performLoad !== false;
+Entity.prototype.update = function(delta) {
+    /* Friction */
+    this.velocity.x -= this.velocity.x * 15 * delta;
+    this.velocity.y -= this.velocity.y * 15 * delta;
+    this.velocity.z -= this.velocity.z * 15 * delta;
 
-        if(performLoad) {
-            entity.load(this.scene);
-        }
-        this.entities.push(entity);
-    }
-
-    this.removeEntity = function(entity, performUnload) {
-        performUnload = performUnload !== false;
-
-        if(performUnload) {
-            entity.unload(this.scene);
-        }
-
-        var index = this.entities.indexOf(entity);
-        if(index > -1) {
-            this.entities.splice(index, 1);
-        }
-    }
+    /* Update position */
+    this.position.x += this.velocity.x * delta;
+    this.position.y += this.velocity.y * delta;
+    this.position.z += this.velocity.z * delta;
 };
 
-function Entity() {
-    this.loaded = false;
+Entity.prototype.init = function() {};
+Entity.prototype.deInit = function() {};
 
-    this.update = function(delta) {
+function DrawableEntity() {
+    Entity.call(this);
 
-    };
+    this.geometry = new THREE.BoxGeometry(1, 1, 1);
+    this.material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+};
 
-    this.load = function(scene) {
-        this.loaded = true;
-    };
+DrawableEntity.prototype = Object.create(Entity.prototype);
+DrawableEntity.constructor = DrawableEntity;
 
-    this.unload = function(scene) {
-        this.loaded = false;
-    };
+DrawableEntity.prototype.update = function(delta) {
+    /* Update position using parent function */
+    Entity.prototype.update.call(this, delta);
+    /* Update mesh position */
+    this.mesh.position.set(this.position.x, this.position.y, this.position.z);
+}
+
+DrawableEntity.prototype.init = function() {
+    game.scene.add(this.mesh);
+};
+
+DrawableEntity.prototype.deInit = function() {
+    game.scene.remove(this.mesh);
 };
