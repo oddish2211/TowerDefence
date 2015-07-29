@@ -1,5 +1,8 @@
 "use strict";
 
+//Global variables
+var game;
+
 function Game() {
     var self = this;
 
@@ -144,7 +147,18 @@ registerOnMouseDown(function(position, buttonCode) {
     });
 });
 
-var game = new Game();
-game.init();
-game.run();
+window.addEventListener('load', initialize);
+
+function initialize() {
+    game = new Game();
+
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    document.addEventListener("mousedown", mouseDownHandler, false);
+    document.addEventListener("mouseup", mouseUpHandler, false);
+    document.addEventListener("mousemove", mouseMoveHandler, false);
+
+    game.init();
+    game.run();
+}
 //game.deInit();
