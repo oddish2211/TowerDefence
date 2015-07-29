@@ -16,8 +16,8 @@ function Game() {
     this.logicCounter = {samples: 0, sum: 0};
 
     /* Create time basis */
-    this.clock0 = new THREE.Clock();
-    this.clock1 = new THREE.Clock();
+    this.frameClock = new THREE.Clock();
+    this.logicClock = new THREE.Clock();
 
     /* Declare camera */
     this.camera;
@@ -53,10 +53,10 @@ function Game() {
 
     this.render = function() {
         /* Reset logic clock */
-        self.clock1.getDelta();
+        self.logicClock.getDelta();
 
         requestAnimationFrame(self.render);
-        var delta = self.clock0.getDelta();
+        var delta = self.frameClock.getDelta();
 
         self.entityManager.entities.forEach(function(entity) {
             entity.update(delta);
@@ -65,7 +65,7 @@ function Game() {
         self.renderer.render(self.scene, self.camera);
 
         /* Store logic time */
-        self.logicCounter.sum += self.clock1.getDelta();
+        self.logicCounter.sum += self.logicClock.getDelta();
         self.logicCounter.samples++;
 
         /* Store frame time */
