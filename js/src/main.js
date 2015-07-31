@@ -97,6 +97,11 @@ function Game() {
             entity.deInit();
          });
     }
+
+    this.resizeHandler = function() {
+        console.log("Resizing canvas to " + window.innerWidth + "x" + window.innerHeight);
+        self.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 }
 
 var raycaster = new THREE.Raycaster();
@@ -152,11 +157,15 @@ window.addEventListener('load', initialize);
 function initialize() {
     game = new Game();
 
-    document.addEventListener("keydown", keyDownHandler, false);
-    document.addEventListener("keyup", keyUpHandler, false);
-    document.addEventListener("mousedown", mouseDownHandler, false);
-    document.addEventListener("mouseup", mouseUpHandler, false);
-    document.addEventListener("mousemove", mouseMoveHandler, false);
+    /* Resize handler */
+    window.addEventListener("resize", game.resizeHandler, false);
+
+    /* Input event handlers */
+    window.addEventListener("keydown", keyDownHandler, false);
+    window.addEventListener("keyup", keyUpHandler, false);
+    window.addEventListener("mousedown", mouseDownHandler, false);
+    window.addEventListener("mouseup", mouseUpHandler, false);
+    window.addEventListener("mousemove", mouseMoveHandler, false);
 
     game.init();
     game.run();
