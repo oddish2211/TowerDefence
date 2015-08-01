@@ -3,14 +3,13 @@
  */
 "use strict";
 
-function Arrow(origin, direction, velocity) {
-    DrawableEntity.call(this);
-
-    this.position.set(origin.x, origin.y, origin.z);
+function Arrow(x, y, z, direction, velocity) {
+    DrawableEntity.call(this, x, y, z);
 
     this.geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     this.material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.mesh.position.set(x, y, z);
 
     this.direction = new THREE.Vector3(direction.x, direction.y, direction.z);
     this.direction.multiplyScalar(velocity);
@@ -29,27 +28,30 @@ Arrow.prototype.update = function(delta) {
     }
 
     var collision = false;
+    var collidedMesh = null;
 
     var nearestEnemies = game.entityManager.getNearestEntities(this.position, Enemy, 3);
     var nearestMeshes = [];
-    nearestEnemies.forEach(function(enemy) {
-       nearestMeshes.push(enemy.mesh);
-    });
+    for(var i = 0; i < nearestEnemies.length; i++) {
+        nearestMeshes[i] = nearestEnemies[i].mesh;
+    }
 
     for(var vertexIndex = 0; vertexIndex < this.mesh.geometry.vertices.length; vertexIndex++) {
         var localVertex = this.mesh.geometry.vertices[vertexIndex].clone();
-        var globalVertex = localVertex.applyMatrix4(this.mesh.matrix );
+        var globalVertex = localVertex.applyMatrix4(this.mesh.matrix);
         var directionVector = globalVertex.sub(this.mesh.position);
 
         var ray = new THREE.Raycaster(this.position, directionVector.clone().normalize());
         var collisionResults = ray.intersectObjects(nearestMeshes);
         if(collisionResults.length > 0) {
             collision = true;
+            collidedMesh = collisionResults[0].object;
         }
     }
 
     if(collision) {
         console.log("Arrow hit an enemy!");
+        nearestEnemies[nearestMeshes.indexOf(collidedMesh)].hit(20);
         game.entityManager.removeEntity(this);
     }
 

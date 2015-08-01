@@ -3,14 +3,22 @@
  */
 "use strict";
 
-function Tile(x, y) {
-    DrawableEntity.call(this);
+var TerrainType = {
+    DIRT: "dirt",
+    STONE: "stone",
+    STONEBRICK: "stonebrick",
+    SAND: "sand",
+    OBSIDIAN: "obsidian",
+    GRAVEL: "gravel"
+};
+
+
+function Tile(x, y, z, type) {
+    DrawableEntity.call(this, x, y, z);
     var self = this;
 
-    this.position.set(x, y, 0);
-
     this.geometry = new THREE.BoxGeometry(1, 1, 0);
-    var defaultTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/dirt.png');
+    var defaultTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/' + type + '.png');
     defaultTexture.magFilter = THREE.NearestFilter;
     defaultTexture.minFilter = THREE.NearestFilter;
     var highlightTexture = THREE.ImageUtils.loadTexture(URL_TEXTURES + '/stone.png');
@@ -21,8 +29,10 @@ function Tile(x, y) {
         new THREE.MeshBasicMaterial({map: highlightTexture})
     ];
     this.mesh = new THREE.Mesh(this.geometry, this.material[0]);
+    this.mesh.position.set(x, y, z);
 
     this.isSelected = false;
+    this.terrain = type;
 
     this.onHover = function(isHovering) {
         if(self.isSelected) {
@@ -36,12 +46,10 @@ function Tile(x, y) {
     };
 
     this.onSelect = function() {
-        if (self.isSelected) {
-            self.isSelected = false;
+        if (self.entity) {
             game.entityManager.removeEntity(self.entity);
             self.entity = undefined;
         } else {
-            self.isSelected = true;
             self.place(new Tower());
             game.entityManager.addEntity(self.entity);
         }

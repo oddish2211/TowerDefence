@@ -3,11 +3,11 @@
  */
 "use strict";
 
-function Camera(camera, x, y, z) {
-    Entity.call(this);
+function Camera(x, y, z, camera) {
+    Entity.call(this, x, y, z);
 
     this.camera = camera;
-    this.position.set(x, y, z);
+    this.camera.position.set(x, y, z);
 };
 
 Camera.prototype = Object.create(Entity.prototype);

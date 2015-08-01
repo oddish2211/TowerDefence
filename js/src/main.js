@@ -32,6 +32,8 @@ function Game() {
     /* Create MapLoader to load map */
     this.mapLoader = new MapLoader();
 
+    this.map = undefined;
+
     this.render = function() {
         /* Reset logic clock */
         self.logicClock.getDelta();
@@ -68,9 +70,11 @@ function Game() {
 
     this.run = function(map) {
         /* Create camera */
-        var camera = new Camera(new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000), 0, 0, 10);
+        var camera = new Camera(0, 0, 10, new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000));
         this.camera = camera.camera;
         this.entityManager.addEntity(camera);
+
+        this.map = map;
 
         /* Add map */
         this.entityManager.addEntity(map);
@@ -78,12 +82,14 @@ function Game() {
         camera.position.x = map.width / 2;
         camera.position.y = map.length / 2;
 
-        /* Create enemy */
-        var enemy0 = new Enemy();
-        this.entityManager.addEntity(enemy0);
-        /* Center enemy on map */
-        enemy0.position.x = map.width / 2;
-        enemy0.position.y = map.length / 2;
+        window.setInterval(function() {
+            /* Create enemy */
+            var enemy0 = new Enemy();
+            game.entityManager.addEntity(enemy0);
+            /* Center enemy on map */
+            enemy0.position.x = game.map.startTile.position.x;
+            enemy0.position.y = game.map.startTile.position.y;
+        }, 5000);
 
         /* Initialize all entities */
         this.entityManager.entities.forEach(function(entity) {
@@ -91,7 +97,7 @@ function Game() {
         });
 
         this.renderId = requestAnimationFrame(this.render);
-    }
+    };
 
     this.reset = function() {
         cancelAnimationFrame(this.renderId);
@@ -100,12 +106,12 @@ function Game() {
          });
 
         this.entities = [];
-    }
+    };
 
     this.resizeHandler = function() {
         console.log("Resizing canvas to " + window.innerWidth + "x" + window.innerHeight);
         self.renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+    };
 }
 
 var raycaster = new THREE.Raycaster();

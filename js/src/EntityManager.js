@@ -58,3 +58,7 @@ EntityManager.prototype.getNearestEntities = function(position, className, maxRa
     });
     return nearestEntities;
 };
+
+EntityManager.prototype.doesEntityExist = function(entity) {
+    return(this.entities.indexOf(entity) !== -1);
+};

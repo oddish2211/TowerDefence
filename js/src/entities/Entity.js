@@ -3,8 +3,8 @@
  */
 "use strict";
 
-function Entity() {
-    this.position = new THREE.Vector3();
+function Entity(x, y, z) {
+    this.position = new THREE.Vector3(x, y, z);
     this.velocity = new THREE.Vector3();
 }
 
@@ -23,14 +23,13 @@ Entity.prototype.update = function(delta) {
 Entity.prototype.init = function() {};
 Entity.prototype.deInit = function() {};
 
-function DrawableEntity() {
-    Entity.call(this);
-
-    this.position.setZ(0.5);
+function DrawableEntity(x, y, z) {
+    Entity.call(this, x, y, z);
 
     this.geometry = new THREE.BoxGeometry(1, 1, 1);
     this.material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.mesh.position.set(x, y, z);
 };
 
 DrawableEntity.prototype = Object.create(Entity.prototype);
