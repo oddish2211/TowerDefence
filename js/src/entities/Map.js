@@ -10,6 +10,8 @@ function Map(width, length) {
     this.length = length;
 
     this.tiles = [];
+
+    return;
     /* Create entities list */
     for(var y = 0; y < length; y++) {
         for(var x = 0; x < width; x++) {

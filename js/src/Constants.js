@@ -9,6 +9,7 @@ var URL_ROOT = root.join('/');
 var URL_RESOURCES = URL_ROOT + "/resources";
 var URL_SPRITES = URL_RESOURCES + "/sprites";
 var URL_TEXTURES = URL_RESOURCES + "/textures";
+var URL_MAPS = URL_RESOURCES + "/maps";
 
 var CAMERA_VELOCITY = 10.0;
 

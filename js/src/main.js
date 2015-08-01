@@ -13,6 +13,7 @@ function Game() {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
+    this.renderId = -1;
 
     /* Setup performance counter */
     this.frameCounter = {samples: 0, sum: 0};
@@ -28,37 +29,14 @@ function Game() {
     /* Create EntityManager to manage entities */
     this.entityManager = new EntityManager(this.scene);
 
-    this.init = function() {
-        /* Create camera */
-        var camera = new Camera(new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000), 0, 0, 10);
-        this.camera = camera.camera;
-        this.entityManager.addEntity(camera);
-
-        /* Create map */
-        var map0 = new Map(32, 32);
-        this.entityManager.addEntity(map0);
-        /* Center camera on map */
-        camera.position.x = map0.width / 2;
-        camera.position.y = map0.length / 2;
-
-        /* Create enemy */
-        var enemy0 = new Enemy();
-        this.entityManager.addEntity(enemy0);
-        /* Center enemy on map */
-        enemy0.position.x = map0.width / 2;
-        enemy0.position.y = map0.length / 2;
-
-        /* Initialize all entities */
-        this.entityManager.entities.forEach(function(entity) {
-            entity.init();
-        });
-    }
+    /* Create MapLoader to load map */
+    this.mapLoader = new MapLoader();
 
     this.render = function() {
         /* Reset logic clock */
         self.logicClock.getDelta();
 
-        requestAnimationFrame(self.render);
+        self.renderId = requestAnimationFrame(self.render);
         var delta = self.frameClock.getDelta();
 
         self.entityManager.entities.forEach(function(entity) {
@@ -88,14 +66,40 @@ function Game() {
         }
     };
 
-    this.run = function() {
-        this.render();
+    this.run = function(map) {
+        /* Create camera */
+        var camera = new Camera(new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000), 0, 0, 10);
+        this.camera = camera.camera;
+        this.entityManager.addEntity(camera);
+
+        /* Add map */
+        this.entityManager.addEntity(map);
+        /* Center camera on map */
+        camera.position.x = map.width / 2;
+        camera.position.y = map.length / 2;
+
+        /* Create enemy */
+        var enemy0 = new Enemy();
+        this.entityManager.addEntity(enemy0);
+        /* Center enemy on map */
+        enemy0.position.x = map.width / 2;
+        enemy0.position.y = map.length / 2;
+
+        /* Initialize all entities */
+        this.entityManager.entities.forEach(function(entity) {
+            entity.init();
+        });
+
+        this.renderId = requestAnimationFrame(this.render);
     }
 
-    this.deInit = function() {
+    this.reset = function() {
+        cancelAnimationFrame(this.renderId);
          this.entities.forEach(function(entity) {
             entity.deInit();
          });
+
+        this.entities = [];
     }
 
     this.resizeHandler = function() {
@@ -167,7 +171,15 @@ function initialize() {
     window.addEventListener("mouseup", mouseUpHandler, false);
     window.addEventListener("mousemove", mouseMoveHandler, false);
 
-    game.init();
-    game.run();
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var map = game.mapLoader.loadMap(xmlhttp.responseText);
+            game.run(map);
+        }
+    }
+
+    xmlhttp.open("GET", URL_MAPS + "/default.json", true);
+    xmlhttp.send();
 }
 //game.deInit();
